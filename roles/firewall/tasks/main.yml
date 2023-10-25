@@ -1,0 +1,30 @@
+---
+- name: install required packages
+  ansible.builtin.package:
+    name: "{{ item }}"
+    state: present 
+  loop:
+    - firewalld
+    - net-tools
+    - httpd
+
+
+- name: Make sure firewalld service is running
+  ansible.builtin.systemd:
+    state: started
+    name: "{{ item }}"
+  loop:
+    - firewalld
+    - httpd
+
+
+- name: configure firewalld ports
+  ansible.posix.firewalld:
+    port: 8080/tcp
+#    service: httpd
+    state: enabled
+    immediate: true
+    permanent: true
+  notify: 
+    - restart firewalld
+    - restart httpd

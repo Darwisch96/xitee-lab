@@ -1,0 +1,20 @@
+---
+- name: RUN xitee-homework.yml
+  hosts:  localhost
+  become: true
+
+  roles:
+    - role: firewall
+      tags: [ 'firewall' ]
+
+    - role: user
+      tags: [ 'user' ]
+
+    - role: wordpress
+      tags: [ 'wordpress' ]
+
+  tasks:
+    - name: install ansible posix collection
+      ansible.builtin.shell: ansible-galaxy collection install ansible.posix
+      
+    

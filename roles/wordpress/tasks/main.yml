@@ -1,0 +1,7 @@
+---
+- name: import podman_install.yml 
+  ansible.builtin.import_tasks: install_podman.yml
+
+- name: import configure_workpress.yml
+  ansible.builtin.import_tasks: configure_workpress.yml
+

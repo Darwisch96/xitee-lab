@@ -1,0 +1,40 @@
+---
+- name: SET FACTS
+  ansible.builtin.set_fact:
+    xitest_password: "{{ lookup('file', 'xitest_password.txt') | password_hash('sha512') }}"
+
+
+- name: create user xitest 
+  ansible.builtin.user:
+    name: xitest
+    shell: /bin/sh
+    group: wheel
+    password: "{{ xitest_password }}"
+    update_password: "on_create"
+#  become: true
+
+
+
+- name: Add SSH public keys
+  ansible.posix.authorized_key:
+    user: xitest
+    key: "{{ item }}"
+    state: present
+  with_items:
+    - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOH/TlOb8TAXiMhN8u7VNqPC7W2hrhygm/1BZBZZp0q marek@GUADALAJARA-WSL
+    - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIP7FHrfu37DbzYBs6T3P/aq+XOeJAtu8Ftl1/3g1EN/K tkuba
+
+
+- name: Allow SSH password authentication
+  ansible.builtin.lineinfile:
+    dest: /etc/ssh/sshd_config
+    regexp: "^PasswordAuthentication"
+    line: "PasswordAuthentication no"
+    state: present
+  notify: Restart sshd
+
+
+#- name: restart ssh
+#  ansible.builtin.service:
+#    name: sshd
+#    state: restarted
