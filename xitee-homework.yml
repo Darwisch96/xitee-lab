@@ -4,17 +4,28 @@
   become: true
 
   roles:
+
+#     - role: ansible_collections
+#      tags: [ never,ansible_collections ]  
+
     - role: firewall
-      tags: [ 'firewall' ]
+      tags: [ firewall ]
 
     - role: user
-      tags: [ 'user' ]
+      tags: [ user ]
 
     - role: wordpress
-      tags: [ 'wordpress' ]
+      tags: [ wordpress ]
 
   tasks:
     - name: install ansible posix collection
       ansible.builtin.shell: ansible-galaxy collection install ansible.posix
       
-    
+    - name: schedule backup script at 8:00, 16:00 and 24:00  
+      ansible.builtin.cron:
+        name: "backup"
+        minute: "0"
+        hour: "0,8,16"
+        month: "*"
+        job: "backup_wordpress_db_files.sh"  
+        state: present

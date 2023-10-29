@@ -9,6 +9,7 @@
     podman run -d --name wordpress-db \
     -e MYSQL_ROOT_PASSWORD=my-secret-pw \
     -e MYSQL_DATABASE=wordpress \
+    --network=wordpress-network \
     docker.io/mysql:5.7
   ignore_errors: true
 
@@ -19,6 +20,7 @@
     -e WORDPRESS_DB_USER=root \
     -e WORDPRESS_DB_PASSWORD=my-secret-pw \
     -e WORDPRESS_DB_NAME=wordpress \
+    --network=wordpress-network \
     -p 8080:80 \
     docker.io/wordpress:latest
   ignore_errors: true
@@ -57,6 +59,7 @@
     -e WORDPRESS_DB_USER=root \
     -e WORDPRESS_DB_PASSWORD=my-secret-pw \
     -e WORDPRESS_DB_NAME=wordpress \
+    --network=wordpress-network \
     -v /opt/wordpress:/var/www/html \
     -p 8080:80 \
     docker.io/wordpress:latest
