@@ -10,25 +10,6 @@
     -e MYSQL_ROOT_PASSWORD=my-secret-pw \
     -e MYSQL_DATABASE=wordpress \
     docker.io/mysql:5.7
-  ignore_errors: true
-
-- name: Start a WordPress container with Podman
-  ansible.builtin.shell: |
-    podman run -d --name wordpress \
-    -e WORDPRESS_DB_HOST=wordpress-db \
-    -e WORDPRESS_DB_USER=root \
-    -e WORDPRESS_DB_PASSWORD=my-secret-pw \
-    -e WORDPRESS_DB_NAME=wordpress \
-    -p 8080:80 \
-    docker.io/wordpress:latest
-  ignore_errors: true
-
-
-#- name: Ensure WordPress data is persistent with Podman (using bind mounts)
-#  ansible.builtin.shell: |
-#    podman run --name wp-data -v /opt/wordpress:/var/www/html -v /opt/data:/var/lib/mysql busybox
-#  ignore_errors: true
-
 
 - name: Create backup directories
   ansible.builtin.file:
@@ -37,18 +18,6 @@
   loop:
     - "/opt/wordpress"
     - "/opt/data"
-
-- name: Copy WordPress files to the persistent volume
-  ansible.builtin.shell: |
-    podman cp wordpress:/var/www/html/. /opt/wordpress
-
-- name: Copy MySQL data to the persistent volume
-  ansible.builtin.shell: |
-    podman cp wordpress-db:/var/lib/mysql/. /opt/data
-
-- name: Remove the temporary WordPress container
-  ansible.builtin.shell: |
-    podman rm -f wordpress
 
 - name: Start WordPress container with persistent volumes
   ansible.builtin.shell: |
@@ -60,3 +29,19 @@
     -v /opt/wordpress:/var/www/html \
     -p 8080:80 \
     docker.io/wordpress:latest
+
+
+#- name: Ensure WordPress data is persistent with Podman (using bind mounts)
+#  ansible.builtin.shell: |
+#    podman run --name wp-data -v /opt/wordpress:/var/www/html -v /opt/data:/var/lib/mysql busybox
+#  ignore_errors: true
+
+
+
+- name: Copy WordPress files to the persistent volume
+  ansible.builtin.shell: |
+    podman cp wordpress:/var/www/html/. /opt/wordpress
+
+- name: Copy MySQL data to the persistent volume
+  ansible.builtin.shell: |
+    podman cp wordpress-db:/var/lib/mysql/. /opt/data
