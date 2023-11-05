@@ -8,8 +8,8 @@
 #     - role: ansible_collections
 #      tags: [ never,ansible_collections ]  
 
-    - role: firewall
-      tags: [ firewall ]
+#    - role: firewall
+#     tags: [ firewall ]
 
     - role: user
       tags: [ user ]
